@@ -1,0 +1,144 @@
+#Hi! This is going to be a simple dice rolling program for DND. Please contact me if you have any questions and happy gaming!
+
+import random
+class_proficiencies = {
+    "Artificer": {
+      "saving_throw": ["Constitution", "Intelligence"],
+      #can choose two skills
+      "skills": ["Arcana", "History", "Investigation", "Medicine", "Nature", "Perception", "Sleight of Hand"],
+      "weapons": ["Simple Weapons", ],
+    },
+    "Barbarian": {
+      "saving_throw": ["Strength", "Constitution"],
+      "skills": ["Animal Handling", "Atheletics", "Intimidation", "Nature", "Perception", "Survival"],
+      "weapons": ["simple weapons", "martial weapons"]
+    },
+    "Bard": {
+      "saving_throw": ["dexterity", "Charisma"],
+      "skills": ["choose any three"],
+      "weapons": ["Simple weapons", "hand crossbows", "longswords", "rapiers", "short swords"],
+    },
+    "Cleric": {
+      "saving_throw": ["Wisdom", "Charisma"],
+      #can choose two skills
+      "skills": ["History", "Insight", "Medicine", "Persuasion", "Religion"],
+      "weapons": ["All simple weapons", ],
+    },
+    "Druid": {
+      "saving_throw": ["Intelligence", "Wisdom"],
+      #Choose any two:
+      "skills": ["Arcana", "Animal Handling", "Insight", "Medicine", "Nature", "Perception", "Religion", "Survival"],
+      "weapons": ["Clubs", "Daggers", "Darts", "Javelins", "Maces", "Quarterstaffs", "Scimitars", "Sickles", "Slings", "Spears"],
+    },
+    "Fighter": {
+        "saving_throws": ["Strength", "Constitution"],
+        "skills": ["Athletics", "Survival", "Perception"],
+        "weapons": ["simple", "martial"],
+    },
+    "Monk": {
+      "saving_throw": ["Strength", "Dexterity"],
+      #Choose any two:
+      "skills": ["Acrobativs", "Athletics", "History", "Insight", "Religion", "Stealth"],
+      "weapons": ["Simple weapons", "Shortswords"],
+    },
+    "Paladin": {
+      "saving_throw": ["Wisdom", "Charisma"],
+      #Choose two:
+      "skills": ["Athletics", "Insight", "Intimidation", "Medicine", "Persuasion", "Religion"],
+      "weapons": ["Simple weapons", "Martial weapons"]
+    },
+    "Ranger": {
+      "saving_throw": ["Strength", "Dexterity"],
+      #Choose three:
+      "skills": ["Animal Handling", "Athletics", "Insight", "Investigation", "Nature", "Perception", "Stealth", "Survival"],
+      "weapons": ["Simple weapons", "Martial weapons"]
+    },
+    "Rogue": {
+      "saving_throw": ["Dexterity", "Intelligence"],
+      #Choose four:
+      "skills": ["Acrobactics", "Athletics", "Deception", "Insight", "Intimidation", "Investigation", "Perception", "Performance", "Persuasion", "Sleight of Hand", "Stealth"],
+      "weapons": ["Simple weapons", "Hand crossbows", "Longswords", "Rapiers", "Shortswords"]
+    },
+    "Sorcerer": {
+      "saving_throw": ["Constituion", "Charisma"],
+      #Choose two:
+      "skills": ["Arcana", "Deception", "Insight", "Intimidation", "Persuasion", "Religion"],
+      "weapons": ["Daggers", "Darts", "Slings", "Quarterstaffs", "Light Crossbows"],
+    },
+    "Warlock": {
+      "saving_throw": ["Intelligence", "Wisdom"],
+      #Choose two:
+      "skills": ["Arcana", "History", "Insight", "Investigation", "Medicine", "Religion"],
+      "weapons": ["Simple weapons", ],
+    },
+    "Wizard": {
+        "saving_throws": ["Intelligence", "Wisdom"],
+        "skills": ["Arcana", "History", "Investigation"],
+        "weapons": ["dagger", "quarterstaff", "light crossbow"]
+    }
+}     
+def proficiency(level):
+    if player_level <= 4:
+        return 2
+    elif player_level <= 8:
+        return 3
+    elif player_level <= 12:
+        return 4
+    elif player_level <= 16:
+        return 5
+    else:
+        return 6
+def roll_dice(sides):
+    return random.randint(1, sides)
+
+#Salutation and capturing user input:
+print("Hi there! Welcome to the dungeon!")
+print("First, let's collect some details about your character.")
+player_class = input("What is your character's class? ")
+ability_score = int(input("What is your character's ability score? "))
+modifier = (ability_score) - 10/2 
+player_level = int(input("What is your character's level? "))
+
+dice_type = int(input("What kind of dice will you be rolling today? (e.g.: 4, 6, 10, 12, 20, or 100) "))
+
+def print_dice_roll(dice_type):
+    if dice_type in [4, 6, 8, 10, 12, 20, 100]:
+        result = roll_dice(dice_type)
+        if dice_type == 100:
+            tens_place = roll_dice(10) - 1
+            ones_place = roll_dice(10)
+            roll_result = tens_place * 10 + ones_place
+            if roll_result == 0 or roll_result > 100:
+                roll_result = 100
+            result = roll_result
+        print("-----------")
+        print(f"D{dice_type} roll: {result}, my lord!")
+
+print_dice_roll(dice_type)
+delve_again = input("Nicely done! Shall we delve deeper? Say yes or no now.")
+while delve_again == "yes":
+    user_action = input("Awesome! Are you making an attack (attack), doing a skill check (skill), rolling a saving throw (save), or just rolling a die (roll)? ")
+    if user_action == "attack":
+      roll_attack = int((roll_dice(20)) + modifier)
+      print(roll_attack)
+    elif user_action == "skill":
+      player_class = player_class.capitalize()
+      class_skills = class_proficiencies.get(player_class, {}).get("skills", [])
+      print(f"As a {player_class}, you have proficiency in the following skills: {', '.join(class_skills)}")
+      chosen_skill = input("Choose a skill for your check: ")
+      if chosen_skill in class_skills:
+        skill_roll = int(roll_dice(20) + modifier)
+        print(f"Your skill check for {chosen_skill} is a {skill_roll}.")
+      if chosen_skill not in class_skills:
+        print("This is not a skill your character can use.")
+        chosen_skill = input("Choose a skill for your check: ")  
+    elif user_action == "save":
+      roll_save = int(roll_dice(20) + proficiency(player_level))
+      print("Your saving roll is " + str(roll_save))
+    dice_type = int(input("What kind of dice will you be rolling today? (e.g.: 4, 6, 10, 12, 20, or 100) "))
+    print_dice_roll(dice_type)
+    delve_again = input("Nicely done! Shall we delve deeper? Say yes or no now: ")
+    print("-----------")
+while delve_again == "no":
+  print("Thanks for playing! Catch you at the tavern!")
+  break
